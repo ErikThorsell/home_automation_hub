@@ -1,4 +1,5 @@
 const Pool = require('pg').Pool
+const graph = require('./graph')
 const config = require('./config')
 
 const pool = new Pool(config.credentials)
@@ -8,7 +9,7 @@ const getLatestMinute = (request, response) => {
     if (error) {
       throw error
     }
-    response.status(200).json(results.rows)
+    response.status(200).send(graph.draw(results.rows))
   })
 }
 
