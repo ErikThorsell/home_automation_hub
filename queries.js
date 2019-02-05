@@ -5,12 +5,8 @@ const config = require('./config')
 const pool = new Pool(config.credentials)
 
 const getLatestMinute = (request, response) => {
-  pool.query('WITH t AS (SELECT * FROM air_q_bedroom ORDER BY ts DESC LIMIT 60) SELECT * FROM t ORDER BY ts ASC', (error, results) => {
-    if (error) {
-      throw error
-    }
-    response.status(200).send(graph.draw(results.rows))
-  })
+  request.params.N = "1"
+  getNLatestMinutes(request, response)
 }
 
 const getNLatestMinutes = (request, response) => {
@@ -24,12 +20,8 @@ const getNLatestMinutes = (request, response) => {
 }
 
 const getLatestHour = (request, response) => {
-  pool.query('SELECT t.id, t.ts, t.co2, t.voc FROM (SELECT *, row_number() OVER(ORDER BY id DESC) as row FROM air_q_bedroom LIMIT 3600) t WHERE t.row % 60 = 0 ORDER BY id ASC', (error, results) => {
-    if (error) {
-      throw error
-    }
-    response.status(200).json(results.rows)
-  })
+  request.params.N = "1"
+  getNLatestHours(request, response)
 }
 
 const getNLatestHours = (request, response) => {
@@ -43,12 +35,8 @@ const getNLatestHours = (request, response) => {
 }
 
 const getLatestDay = (request, response) => {
-  pool.query('SELECT t.id, t.ts, t.co2, t.voc FROM (SELECT *, row_number() OVER(ORDER BY id DESC) as row FROM air_q_bedroom LIMIT 84600) t WHERE t.row % 1800 = 0 ORDER BY id ASC', (error, results) => {
-    if (error) {
-      throw error
-    }
-    response.status(200).json(results.rows)
-  })
+  request.params.N = "1"
+  getNLatestDays(request, response)
 }
 
 const getNLatestDays = (request, response) => {
